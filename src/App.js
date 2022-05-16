@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Counter from "./components/Counter";
 import PostList from "./components/PostList";
 import MyButton from "./UI/button/MyButton";
+import MyInput from "./UI/input/MyInput";
 
 export default function App() {
     const [value, setValue] = useState("RANDOM TEXT");
@@ -14,12 +15,29 @@ export default function App() {
         {id: 2, title: "javascript2", body:"Destription2"}
     ])
 
+    const [title, setTitle] = useState("");
+    const bodyInputRef = useRef();
+    const addNewPost = (e) => {
+        e.preventDefault()
+        console.log(title)
+        console.log(bodyInputRef.current.value)
+    }
+
     return (
         <div className="App">
             <form>
-                <input type="text" placeholder="title"/>
-                <input type="text" placeholder="desription"/>
-                <MyButton>Submit</MyButton>
+                <MyInput 
+                    value={title} 
+                    onChange={e => setTitle(e.target.value)}
+                    type="text" 
+                    placeholder="title"
+                />
+                <MyInput
+                    ref={bodyInputRef} 
+                    type="text" 
+                    placeholder="desription"
+                />
+                <MyButton onClick={addNewPost}>Submit</MyButton>
             </form>
             <h1>{value}</h1>
             <input 
