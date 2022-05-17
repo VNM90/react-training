@@ -7,33 +7,47 @@ import MyInput from "./UI/input/MyInput";
 export default function App() {
     const [value, setValue] = useState("RANDOM TEXT");
     const [posts, setPosts] = useState([
-        {id: 1, title: "python", body:"Destription"}, 
-        {id: 2, title: "python2", body:"Destription2"}
+        {id: 1, title: "python", description:"Destription"}, 
+        {id: 2, title: "python2", description:"Destription2"}
     ])
     const [posts2, setPosts2] = useState([
         {id: 1, title: "javascript", body:"Destription"}, 
         {id: 2, title: "javascript2", body:"Destription2"}
     ])
 
+
+    const [post, setPost] = useState({title:'', description:''})
     const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
     const bodyInputRef = useRef();
     const addNewPost = (e) => {
         e.preventDefault()
-        console.log(title)
-        console.log(bodyInputRef.current.value)
+        const newPost = {
+            id: Date.now(),
+            title,
+            description
+        }
+       setPosts([...posts, newPost])
+       setPost({title: "", description:""})
     }
 
     return (
         <div className="App">
             <form>
                 <MyInput 
-                    value={title} 
-                    onChange={e => setTitle(e.target.value)}
+                    value={post.title} 
+                    onChange={e => setPost({...post, title: e.target.value})}
                     type="text" 
                     placeholder="title"
                 />
                 <MyInput
                     ref={bodyInputRef} 
+                    type="text" 
+                    placeholder="desription useRef"
+                />
+                   <MyInput
+                    value={post.description} 
+                    onChange={e => setPost({...post, description: e.target.value})}
                     type="text" 
                     placeholder="desription"
                 />
