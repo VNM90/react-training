@@ -18,6 +18,10 @@ export default function App() {
         setPosts([...posts, newPost])
     }
 
+    const removePost = (post) => {
+        setPosts(posts.filter(p => p.id !== post.id))
+    }
+
     return (
         <div className="App">
             <PostForm create={createPost}/>
@@ -28,7 +32,7 @@ export default function App() {
                 onChange={e => setValue(e.target.value)}
             />
             <Counter />
-            <PostList posts={posts} title="Spis 1"/>
+            <PostList remove={removePost} posts={posts} title="Spis 1"/>
             <PostList posts={posts2} title="Spis 2"/>
         </div>
     )
