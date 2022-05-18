@@ -1,8 +1,7 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import Counter from "./components/Counter";
 import PostList from "./components/PostList";
-import MyButton from "./UI/button/MyButton";
-import MyInput from "./UI/input/MyInput";
+import PostForm from "./components/PostForm";
 
 export default function App() {
     const [value, setValue] = useState("RANDOM TEXT");
@@ -15,44 +14,13 @@ export default function App() {
         {id: 2, title: "javascript2", body:"Destription2"}
     ])
 
-
-    const [post, setPost] = useState({title:'', description:''})
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
-    const bodyInputRef = useRef();
-    const addNewPost = (e) => {
-        e.preventDefault()
-        const newPost = {
-            id: Date.now(),
-            title,
-            description
-        }
-       setPosts([...posts, newPost])
-       setPost({title: "", description:""})
+    const createPost = (newPost) => {
+        setPosts([...posts, newPost])
     }
 
     return (
         <div className="App">
-            <form>
-                <MyInput 
-                    value={post.title} 
-                    onChange={e => setPost({...post, title: e.target.value})}
-                    type="text" 
-                    placeholder="title"
-                />
-                <MyInput
-                    ref={bodyInputRef} 
-                    type="text" 
-                    placeholder="desription useRef"
-                />
-                   <MyInput
-                    value={post.description} 
-                    onChange={e => setPost({...post, description: e.target.value})}
-                    type="text" 
-                    placeholder="desription"
-                />
-                <MyButton onClick={addNewPost}>Submit</MyButton>
-            </form>
+            <PostForm create={createPost}/>
             <h1>{value}</h1>
             <input 
                 type="text" 
