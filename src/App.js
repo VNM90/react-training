@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Counter from "./components/Counter";
 import PostList from "./components/PostList";
 import PostForm from "./components/PostForm";
+import MySelect from "./UI/select/MySelect";
 
 export default function App() {
     const [value, setValue] = useState("RANDOM TEXT");
@@ -14,6 +15,7 @@ export default function App() {
         {id: 2, title: "javascript2", body:"Destription2"}
     ])
 
+    const [selectedSort, setSelectedSort] = useState('')
     const createPost = (newPost) => {
         setPosts([...posts, newPost])
     }
@@ -22,9 +24,14 @@ export default function App() {
         setPosts(posts.filter(p => p.id !== post.id))
     }
 
+    const sortPosts = (sort) => {
+        
+    }
+
     return (
         <div className="App">
             <PostForm create={createPost}/>
+            <hr />
             <h1>{value}</h1>
             <input 
                 type="text" 
@@ -32,8 +39,25 @@ export default function App() {
                 onChange={e => setValue(e.target.value)}
             />
             <Counter />
-            <PostList remove={removePost} posts={posts} title="Spis 1"/>
-            <PostList posts={posts2} title="Spis 2"/>
+            <hr />
+            <div>
+                <MySelect
+                    value={selectedSort}
+                    onChange={sort => setSelectedSort(sort)}
+                    defaultValue="SORT"
+                    options={[
+                        {value: 'title', name: "nazwa"},
+                        {value: 'description', name: "opis"},
+                    ]}
+                />
+            </div>
+            {posts.length !== 0
+                ?
+                <PostList remove={removePost} posts={posts} title="Spis 1"/>
+                :
+                <h1>Nie ma postow</h1>
+            }
+            <PostList remove={removePost} posts={posts2} title="Spis 2"/>
         </div>
     )
 }
