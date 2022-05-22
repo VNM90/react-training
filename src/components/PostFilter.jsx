@@ -1,0 +1,27 @@
+import React from 'react';
+import MyInput from "../UI/input/MyInput";
+import MySelect from "../UI/select/MySelect";
+
+const PostFilter = ({filter, setFilter}) => {
+    return (
+        <div>
+            <MyInput
+                value={filter.query}
+                onChange={e => setFilter({...filter, query: e.target.value})}
+                placeholder="TEST"
+                type="text"
+            />
+            <MySelect
+                value={filter.sort}
+                onChange={selectedSort => setFilter({...filter, sort: selectedSort})}
+                defaultValue="SORT"
+                options={[
+                    {value: 'title', name: "nazwa"},
+                    {value: 'description', name: "opis"},
+                ]}
+            />
+        </div>
+    )
+}
+
+export default PostFilter;

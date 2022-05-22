@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Counter from "./components/Counter";
 import PostList from "./components/PostList";
 import PostForm from "./components/PostForm";
 import MySelect from "./UI/select/MySelect";
+import MyInput from "./UI/input/MyInput";
+import PostFilter from "./components/PostFilter";
 
 export default function App() {
     const [value, setValue] = useState("RANDOM TEXT");
@@ -16,6 +18,21 @@ export default function App() {
     ])
 
     const [selectedSort, setSelectedSort] = useState('')
+    const [searchQuery, setSearchQuery] = useState('')
+
+    const [filter, setFilter] = useState({sort:'',query:''})
+
+    const sortedPosts = useMemo(() => {
+        if(filter.sort) {
+            return [...posts].sort((a,b) => a[filter.sort].localeCompare(b[filter.sort]))
+        }
+        return posts;
+    },[filter.sort, posts])
+
+    const sortedAndSearchedPosts = useMemo(() => {
+        return sortedPosts.filter(post => post.title.toLowerCase().includes(filter.query.toLowerCase()))
+    },[filter.query, sortedPosts])
+
     const createPost = (newPost) => {
         setPosts([...posts, newPost])
     }
@@ -24,9 +41,9 @@ export default function App() {
         setPosts(posts.filter(p => p.id !== post.id))
     }
 
-    const sortPosts = (sort) => {
-        
-    }
+    // const sortPosts = (sort) => {
+    //     setSelectedSort(sort);
+    // }
 
     return (
         <div className="App">
@@ -40,20 +57,10 @@ export default function App() {
             />
             <Counter />
             <hr />
-            <div>
-                <MySelect
-                    value={selectedSort}
-                    onChange={sort => setSelectedSort(sort)}
-                    defaultValue="SORT"
-                    options={[
-                        {value: 'title', name: "nazwa"},
-                        {value: 'description', name: "opis"},
-                    ]}
-                />
-            </div>
-            {posts.length !== 0
+            <PostFilter filter={filter} setFilter={setFilter}/>
+            {sortedAndSearchedPosts.length !== 0
                 ?
-                <PostList remove={removePost} posts={posts} title="Spis 1"/>
+                <PostList remove={removePost} posts={sortedAndSearchedPosts} title="Spis 1"/>
                 :
                 <h1>Nie ma postow</h1>
             }
