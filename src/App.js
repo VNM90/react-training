@@ -1,40 +1,33 @@
-import React, { useState, useMemo } from "react";
+import React, {useEffect, useState} from "react";
 import Counter from "./components/Counter";
 import PostList from "./components/PostList";
 import PostForm from "./components/PostForm";
-import MySelect from "./UI/select/MySelect";
-import MyInput from "./UI/input/MyInput";
 import PostFilter from "./components/PostFilter";
+import MyModal from "./UI/MyModal/MyModal";
+import MyButton from "./UI/button/MyButton";
+import { usePosts } from "./hooks/usePosts";
+import PostService from "./API/PostService";
 
 export default function App() {
     const [value, setValue] = useState("RANDOM TEXT");
-    const [posts, setPosts] = useState([
-        {id: 1, title: "python", description:"Destription"}, 
-        {id: 2, title: "python2", description:"Destription2"}
-    ])
-    const [posts2, setPosts2] = useState([
-        {id: 1, title: "javascript", body:"Destription"}, 
-        {id: 2, title: "javascript2", body:"Destription2"}
-    ])
-
-    const [selectedSort, setSelectedSort] = useState('')
-    const [searchQuery, setSearchQuery] = useState('')
+    const [posts, setPosts] = useState([])
 
     const [filter, setFilter] = useState({sort:'',query:''})
+    const [modal, setModal] = useState(false)
+    const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query)
 
-    const sortedPosts = useMemo(() => {
-        if(filter.sort) {
-            return [...posts].sort((a,b) => a[filter.sort].localeCompare(b[filter.sort]))
-        }
-        return posts;
-    },[filter.sort, posts])
-
-    const sortedAndSearchedPosts = useMemo(() => {
-        return sortedPosts.filter(post => post.title.toLowerCase().includes(filter.query.toLowerCase()))
-    },[filter.query, sortedPosts])
+    useEffect(() => {
+        fetchPosts()
+    }, [])
 
     const createPost = (newPost) => {
         setPosts([...posts, newPost])
+        setModal(false)
+    }
+
+    async function fetchPosts() {
+        const posts = await PostService
+        setPosts(posts)
     }
 
     const removePost = (post) => {
@@ -47,8 +40,6 @@ export default function App() {
 
     return (
         <div className="App">
-            <PostForm create={createPost}/>
-            <hr />
             <h1>{value}</h1>
             <input 
                 type="text" 
@@ -57,14 +48,16 @@ export default function App() {
             />
             <Counter />
             <hr />
+            <MyButton onClick={() => setModal(true)}>
+                DODAJ POST
+            </MyButton>
+            <hr />
+            <MyModal visible={modal} setVisible={setModal}>
+                <PostForm create={createPost}/>
+            </MyModal>
             <PostFilter filter={filter} setFilter={setFilter}/>
-            {sortedAndSearchedPosts.length !== 0
-                ?
+            <hr />
                 <PostList remove={removePost} posts={sortedAndSearchedPosts} title="Spis 1"/>
-                :
-                <h1>Nie ma postow</h1>
-            }
-            <PostList remove={removePost} posts={posts2} title="Spis 2"/>
         </div>
     )
 }
