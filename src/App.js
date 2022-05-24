@@ -7,6 +7,7 @@ import MyModal from "./UI/MyModal/MyModal";
 import MyButton from "./UI/button/MyButton";
 import { usePosts } from "./hooks/usePosts";
 import PostService from "./API/PostService";
+import {useFetching} from "./hooks/useFetching";
 
 export default function App() {
     const [value, setValue] = useState("RANDOM TEXT");
@@ -15,6 +16,10 @@ export default function App() {
     const [filter, setFilter] = useState({sort:'',query:''})
     const [modal, setModal] = useState(false)
     const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query)
+    const [fetchPosts, isPostsLoading, postError] = useFetching(async () => {
+        const posts = await PostService()
+        setPosts(posts)
+    })
 
     useEffect(() => {
         fetchPosts()
@@ -25,10 +30,6 @@ export default function App() {
         setModal(false)
     }
 
-    async function fetchPosts() {
-        const posts = await PostService
-        setPosts(posts)
-    }
 
     const removePost = (post) => {
         setPosts(posts.filter(p => p.id !== post.id))
@@ -57,7 +58,13 @@ export default function App() {
             </MyModal>
             <PostFilter filter={filter} setFilter={setFilter}/>
             <hr />
-                <PostList remove={removePost} posts={sortedAndSearchedPosts} title="Spis 1"/>
+            {postError &&
+                <h1>Error ${postError}</h1>
+            }
+            {isPostsLoading
+                ? <h1>Loading...</h1>
+                : <PostList remove={removePost} posts={sortedAndSearchedPosts} title="Spis 1"/>
+            }
         </div>
     )
 }
